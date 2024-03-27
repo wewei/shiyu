@@ -29,7 +29,7 @@ const config: ForgeConfig = {
             js: './src/frame/index.tsx',
             name: 'frame',
             preload: {
-              js: './src/preload.ts',
+              js: './src/frame/preload.ts',
             },
           },
         ],

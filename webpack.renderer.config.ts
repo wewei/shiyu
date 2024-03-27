@@ -1,3 +1,4 @@
+import path from "node:path";
 import type { Configuration } from 'webpack';
 
 import { rules } from './webpack.rules';

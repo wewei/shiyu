@@ -1,19 +1,36 @@
 import { contextBridge, ipcRenderer } from "electron";
-import { AnyInvokes } from "./common";
-import { keys } from "ts-transformer-keys";
+import { AnyInvokes, AnyMessagePort } from "./common";
 
 export function implementInvokes<I extends AnyInvokes>(
-    apiKey: string = "invoke"
+  template: { [K in keyof I]: true },
+  apiKey = "BridgedApi"
 ): void {
-    contextBridge.exposeInMainWorld(
-        apiKey,
-        keys<I>().reduce((m, key) => {
-            m[key] = ((...args: any) =>
-                ipcRenderer.invoke(
-                    `invoke:${key as string}`,
-                    ...args
-                )) as I[keyof I];
-            return m;
-        }, {} as I)
-    );
+  contextBridge.exposeInMainWorld(
+    apiKey,
+    Object.keys(template).reduce((m, key) => {
+      m[key] = (...args: unknown[]) =>
+        ipcRenderer.invoke(`invoke:${key}`, ...args);
+      return m;
+    }, {} as Record<string, unknown>)
+  );
+}
+
+export function implementMessagePort<M extends AnyMessagePort>(
+  template: { [K in keyof M]: true },
+  apiKey = "BridgedMessages"
+): void {
+  console.log('exposing', apiKey);
+  contextBridge.exposeInMainWorld(
+    apiKey,
+    Object.keys(template).reduce((m, key) => {
+      const channel = `message:${key}`;
+      m[key] = (callback: (v: unknown) => void) => {
+        ipcRenderer.on(channel, callback);
+        return () => {
+          ipcRenderer.off(channel, callback);
+        };
+      };
+      return m;
+    }, {} as Record<string, unknown>)
+  );
 }

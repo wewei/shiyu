@@ -1,21 +1,25 @@
 import React, { useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
 
-import { TITLE_BAR_HEIGHT } from "../common";
-import { Api } from "../api";
+import { TITLE_BAR_HEIGHT } from "./common";
 
 import "./index.css";
+import { MessagePort } from "./api";
+import { MessageReceiver } from "@src/electron-helper/common";
 
 declare global {
   interface Window {
-    api: Api;
+    BridgedMessages: MessageReceiver<MessagePort>;
   }
 }
 
 const Header: React.FunctionComponent = () => {
   const [title, setTitle] = useState("");
   useEffect(() => {
-    const unregister = window.api.on.didUpdateTitle((_, newTitle) => setTitle(newTitle)) || (() => {});
+    const unregister = window.BridgedMessages.didUpdateTitle((_, newTitle) => {
+      setTitle(newTitle);
+    });
+
     window.setTimeout(() => unregister(), 10000);
     return () => {
       unregister();
@@ -33,5 +37,5 @@ const Header: React.FunctionComponent = () => {
   );
 };
 
-const root = createRoot(document.body);
+const root = createRoot(document.getElementById('app-root'));
 root.render(<Header></Header>);
