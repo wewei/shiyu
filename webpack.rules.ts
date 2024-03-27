@@ -1,4 +1,5 @@
 import type { ModuleOptions } from 'webpack';
+import keysTransformer from 'ts-transformer-keys/transformer';
 
 export const rules: Required<ModuleOptions>['rules'] = [
   // Add support for native node modules
@@ -25,6 +26,9 @@ export const rules: Required<ModuleOptions>['rules'] = [
       loader: 'ts-loader',
       options: {
         transpileOnly: true,
+        getCustomTransformers: program => ({
+          before: [keysTransformer(program)]
+        })
       },
     },
   },

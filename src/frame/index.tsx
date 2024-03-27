@@ -15,7 +15,11 @@ declare global {
 const Header: React.FunctionComponent = () => {
   const [title, setTitle] = useState("");
   useEffect(() => {
-    window.api.on.didUpdateTitle((_, newTitle) => setTitle(newTitle));
+    const unregister = window.api.on.didUpdateTitle((_, newTitle) => setTitle(newTitle)) || (() => {});
+    window.setTimeout(() => unregister(), 10000);
+    return () => {
+      unregister();
+    };
   }, []);
   return (
     <header
