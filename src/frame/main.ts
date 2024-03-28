@@ -1,7 +1,8 @@
-import { TITLE_BAR_HEIGHT } from "@src/frame/common";
 import { createMessagePort } from "@src/electron-helper/main";
 import { BrowserView, BrowserWindow } from "electron";
 import { MessagePort } from "./api";
+import { createView as createHeaderView } from "@src/header/main";
+import { Subject } from "rxjs";
 
 declare const FRAME_WEBPACK_ENTRY: string;
 declare const FRAME_PRELOAD_WEBPACK_ENTRY: string;
@@ -17,8 +18,8 @@ function createMainWebView(): BrowserView {
   view.setAutoResize({ width: true, height: true });
   view.setBounds({
     x: 0,
-    y: TITLE_BAR_HEIGHT,
-    height: DEFAULT_HEIGHT - TITLE_BAR_HEIGHT,
+    y: 40,
+    height: DEFAULT_HEIGHT - 40,
     width: DEFAULT_WIDTH,
   });
 
@@ -46,16 +47,24 @@ export const createFrameWindow = (): BrowserWindow => {
   );
 
   // Create main view
+  const title = new Subject<string>();
   const mainView = createMainWebView();
 
   mainView.webContents.on('page-title-updated', () => {
-    const title = mainView.webContents.getTitle();
-    messagePort.didUpdateTitle(title);
-    console.log(title);
+    const newTitle = mainView.webContents.getTitle();
+    messagePort.didUpdateTitle(newTitle);
+    title.next(newTitle);
+    console.log(newTitle);
   });
 
   mainWindow.addBrowserView(mainView);
   void mainView.webContents.loadURL("https://www.bing.com/");
+
+  const headerView = createHeaderView({ title });
+  headerView.setBounds({ x: 0, y: 0, width: DEFAULT_WIDTH, height: 40 });
+  headerView.setAutoResize({ width: true, height: true });
+  console.log(headerView.getBounds());
+  mainWindow.addBrowserView(headerView);
 
   return mainWindow;
 };

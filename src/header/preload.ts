@@ -1,4 +1,5 @@
-import { Invokes } from "./api";
-import { implementInvokes } from "@src/electron-helper/preload";
+import { Invokes, Messages } from "./api";
+import { implementInvokes, implementMessagePort } from "@src/electron-helper/preload";
 
-implementInvokes<Invokes>({ setHeaderVisibility: true });
+implementInvokes<Invokes>({ setExpanded: true });
+implementMessagePort<Messages>({ didTitleChange: true });

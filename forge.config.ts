@@ -10,6 +10,19 @@ import { FuseV1Options, FuseVersion } from '@electron/fuses';
 
 import { mainConfig } from './webpack.main.config';
 import { rendererConfig } from './webpack.renderer.config';
+import { WebpackPluginEntryPoint } from '@electron-forge/plugin-webpack/dist/Config';
+
+function entryPoint(name: string, scriptExt = 'tsx', overrides: Partial<WebpackPluginEntryPoint> = {}): WebpackPluginEntryPoint {
+  return {
+    name,
+    html: `./src/${name}/index.html`,
+    js: `./src/${name}/index.${scriptExt}`,
+    preload: {
+      js: `./src/${name}/preload.ts`,
+    },
+    ...overrides,
+  };
+}
 
 const config: ForgeConfig = {
   packagerConfig: {
@@ -24,14 +37,8 @@ const config: ForgeConfig = {
       renderer: {
         config: rendererConfig,
         entryPoints: [
-          {
-            html: './src/frame/index.html',
-            js: './src/frame/index.tsx',
-            name: 'frame',
-            preload: {
-              js: './src/frame/preload.ts',
-            },
-          },
+          entryPoint('frame'),
+          entryPoint('header'),
         ],
       },
     }),
