@@ -1,6 +1,6 @@
 import { BrowserView } from "electron";
 import { Invokes, Messages } from "./api";
-import { createMessagePort, implementInvokes } from "@src/electron-helper/main";
+import { createMessagePort, implementInvokes } from "@src/main/ipc-helper";
 import { Observable } from "rxjs";
 
 declare const HEADER_WEBPACK_ENTRY: string;
@@ -23,7 +23,7 @@ export function createView({ title }: HeaderViewProps): BrowserView {
   title.subscribe(didTitleChange);
 
   function updateBound(expanded: boolean) {
-    view.setBounds({ ...view.getBounds(), height: expanded ? 40 : 15 });
+    view.setBounds({ ...view.getBounds(), height: expanded ? 100 : 40 });
     console.log(view.getBounds());
   }
 

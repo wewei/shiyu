@@ -1,5 +1,5 @@
 import { app, BrowserWindow, Menu, MenuItem } from 'electron';
-import { createFrameWindow } from './frame/main';
+import { createFrameWindow } from './component/frame/main';
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require('electron-squirrel-startup')) {

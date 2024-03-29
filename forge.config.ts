@@ -15,10 +15,10 @@ import { WebpackPluginEntryPoint } from '@electron-forge/plugin-webpack/dist/Con
 function entryPoint(name: string, scriptExt = 'tsx', overrides: Partial<WebpackPluginEntryPoint> = {}): WebpackPluginEntryPoint {
   return {
     name,
-    html: `./src/${name}/index.html`,
-    js: `./src/${name}/index.${scriptExt}`,
+    html: `./src/component/${name}/index.html`,
+    js: `./src/component/${name}/index.${scriptExt}`,
     preload: {
-      js: `./src/${name}/preload.ts`,
+      js: `./src/component/${name}/preload.ts`,
     },
     ...overrides,
   };

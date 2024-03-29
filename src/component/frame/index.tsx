@@ -5,18 +5,16 @@ import { TITLE_BAR_HEIGHT } from "./common";
 
 import "./index.css";
 import { MessagePort } from "./api";
-import { MessageReceiver } from "@src/electron-helper/common";
+import { Receiver } from "@src/preload/ipc-helper";
 
 declare global {
-  interface Window {
-    BridgedMessages: MessageReceiver<MessagePort>;
-  }
+  const FrameEmitter: Receiver<MessagePort>;
 }
 
 const Header: React.FunctionComponent = () => {
   const [title, setTitle] = useState("");
   useEffect(() => {
-    const unregister = window.BridgedMessages.didUpdateTitle((_, newTitle) => {
+    const unregister = FrameEmitter.didUpdateTitle((_, newTitle) => {
       setTitle(newTitle);
     });
 

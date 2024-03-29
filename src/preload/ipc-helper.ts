@@ -1,7 +1,11 @@
-import { contextBridge, ipcRenderer } from "electron";
-import { AnyInvokes, AnyMessagePort } from "./common";
+import { IpcRendererEvent, contextBridge, ipcRenderer } from "electron";
+import { UnknownApi, UnknownEmitter } from "../common/ipc-helper";
 
-export function implementInvokes<I extends AnyInvokes>(
+export type Receiver<M extends UnknownEmitter> = {
+  [K in keyof M]: (callback: (e: IpcRendererEvent, ...args: Parameters<M[K]>) => void) => () => void;
+};
+
+export function implementApi<I extends UnknownApi>(
   template: { [K in keyof I]: true },
   apiKey = "BridgedApi"
 ): void {
@@ -15,9 +19,9 @@ export function implementInvokes<I extends AnyInvokes>(
   );
 }
 
-export function implementMessagePort<M extends AnyMessagePort>(
+export function implementEmitter<M extends UnknownEmitter>(
   template: { [K in keyof M]: true },
-  apiKey = "BridgedMessages"
+  apiKey = "BridgedEmitter"
 ): void {
   console.log('exposing', apiKey);
   contextBridge.exposeInMainWorld(

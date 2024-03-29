@@ -1,7 +1,7 @@
-import { createMessagePort } from "@src/electron-helper/main";
+import { createMessagePort } from "@src/main/ipc-helper";
 import { BrowserView, BrowserWindow } from "electron";
 import { MessagePort } from "./api";
-import { createView as createHeaderView } from "@src/header/main";
+import { createView as createHeaderView } from "@src/component/header/main";
 import { Subject } from "rxjs";
 
 declare const FRAME_WEBPACK_ENTRY: string;
@@ -38,7 +38,7 @@ export const createFrameWindow = (): BrowserWindow => {
     frame: false,
   });
   
-  void mainWindow.loadURL(FRAME_WEBPACK_ENTRY);
+  // void mainWindow.loadURL(FRAME_WEBPACK_ENTRY);
 
   mainWindow.webContents.openDevTools();
   const messagePort = createMessagePort<MessagePort>(
@@ -57,11 +57,11 @@ export const createFrameWindow = (): BrowserWindow => {
     console.log(newTitle);
   });
 
-  mainWindow.addBrowserView(mainView);
-  void mainView.webContents.loadURL("https://www.bing.com/");
+  // mainWindow.addBrowserView(mainView);
+  // void mainView.webContents.loadURL("https://www.bing.com/");
 
   const headerView = createHeaderView({ title });
-  headerView.setBounds({ x: 0, y: 0, width: DEFAULT_WIDTH, height: 40 });
+  headerView.setBounds({ x: 0, y: 0, width: DEFAULT_WIDTH, height: 100 });
   headerView.setAutoResize({ width: true, height: true });
   console.log(headerView.getBounds());
   mainWindow.addBrowserView(headerView);
